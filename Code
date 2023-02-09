@@ -1,0 +1,46 @@
+<div id="circle-div" style="position: absolute; width: 90px; height: 90px; margin: 70 auto; margin-top: 50px;">
+  <div id="circle" style="position: absolute; top: 0; left: 10; width: 95px; height: 95px; background-color: red; border-radius: 75px;"></div>
+</div>
+<input type="range" min="0" max="150" value="0" id="pulse-rate" style="width: 250px; margin-left: 100px; position: absolute; top: 200px; left: 40px;" />
+<div id="pulse-rate-text" style="margin-top: 100px;"></div>
+
+<script>
+  const pulseRateSlider = document.getElementById("pulse-rate");
+  const circleDiv = document.getElementById("circle-div");
+  const pulseRateText = document.getElementById("pulse-rate-text");
+
+  pulseRateSlider.addEventListener("input", () => {
+    const pulseRate = pulseRateSlider.value;
+    if(pulseRate > 0) {
+      const animationDuration = (60 / pulseRate) + "s";
+      circleDiv.style.animationDuration = animationDuration;
+    } else if (pulseRate == 0) {
+      const animationDuration = "50s";
+      circleDiv.style.animationDuration = animationDuration;
+    }
+    pulseRateText.innerHTML = `Beats Per Minute: ${pulseRate}`;
+    const scaleValue = 1 + (pulseRate / 150);
+    circleDiv.style.transform = `scale(${scaleValue})`;
+  });
+</script>
+<style>
+  #circle-div {
+    position: absolute;
+    animation-name: pulse;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    margin: 0 auto;
+    margin-top: -50px;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.25);
+    }
+  }
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
