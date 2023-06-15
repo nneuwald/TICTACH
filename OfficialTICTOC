@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin-top: 4in;
+      font-size: 18px;
+    }
+
+    div {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 120px;
+      font-size: 14px;
+    }
+
+    .confidence-label {
+      font-size: 20px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      background-color: transparent;
+      -webkit-appearance: none;
+      height: 10px;
+      position: relative;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background-color: black;
+      cursor: pointer;
+      border-radius: 50%;
+      border: 1px solid black;
+      margin-top: -8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      border: none;
+      height: 2px;
+      background: black;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    input[type="range"]::before,
+    input[type="range"]::after {
+      content: "";
+      position: absolute;
+      height: 14px;
+      width: 4px;
+      background-color: black;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    input[type="range"]::before {
+      left: 0;
+    }
+
+    input[type="range"]::after {
+      right: 0;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+    }
+
+    button {
+      /* button styles here */
+    }
+
+    #recorded-value {
+      /* recorded value styles here */
+    }
+
+    #heart-div {
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      animation-name: beat;
+      animation-duration: 1s;
+      animation-iteration-count: infinite;
+    }
+
+    .paused {
+      animation-play-state: paused;
+      transform: scale(1) !important;
+    }
+
+    @keyframes beat {
+      0% {
+        transform: scale(1);
+      }
+      20% {
+        transform: scale(1.25);
+      }
+      80% {
+        transform: scale(1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    h1 {
+      font-size: 16px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      background-color: lightgray;
+      border-radius: 10px;
+      outline: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      background-color: black;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    input[type=range]::-moz-range-thumb {
+      width: 15px;
+      height: 15px;
+      background-color: black;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    #beat-rate {
+      width: 350px;
+      margin-left: 100px;
+      position: absolute;
+      top: 100px;
+      left: 40px;
+    }
+
+    #finished-button {
+      margin-top: 40px;
+      position: absolute;
+      top: 100px;
+      left: 300px;
+    }
+
+    #cant-feel-button {
+      margin-top: 40px;
+      position: absolute;
+      top: 130px;
+      left: 300px;
+    }
+
+    #reset-button {
+      margin-top: 40px;
+      position: absolute;
+      top: 200px;
+      left: 200px;
+      display: none;
+    }
+
+    #beat-rate-text {
+      margin-top: 160px;
+      display: none;
+    }
+
+    #confirmation-message {
+      display: none;
+      position: absolute;
+      top: 80px;
+      left: 60%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-weight: bold;
+      font-size: 20px;
+      color: green;
+    }
+
+    #start-task-button {
+      margin-top: 40px;
+      position: absolute;
+      top: 250px;
+      left: 300px;
+      background-color: green;
+      color: white;
+    }
+
+    #end-task-button {
+      margin-top: 40px;
+      position: absolute;
+      top: 280px;
+      left: 300px;
+      background-color: #AA0000;
+      color: white;
+      display: none;
+    }
+
+    .task-label {
+      position: absolute;
+      top: 10px;
+      right: 5px;
+      font-size: 16px;
+      position: relative;
+      animation-duration: 0.3s;
+    }
+
+    .task-label-animation {
+      animation-name: moveUp;
+    }
+
+    @keyframes moveUp {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-10px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="subject-id-container" style="position: absolute; top: 10px; right: 10px;">
+    <label for="subject-id" id="subject-id-label">Subject ID:</label>
+    <input type="text" id="subject-id" name="subject-id">
+  </div>
+
+  <div id="heart-div" style="position: absolute; top: 50px; left: 10px;">
+    <div id="heart" style="position: relative; width: 100px; height: 90px; margin-top: 10px;">
+      <div id="heart-before" style="position: absolute; top: 0; width: 52px; height: 80px; border-radius: 50px 50px 0 0; background: #F44336; left: 50px; transform: rotate(-45deg); transform-origin: 0 100%;"></div>
+      <div id="heart-after" style="position: absolute; top: 0; width: 52px; height: 80px; border-radius: 50px 50px 0 0; background: #F44336; left: 0; transform: rotate(45deg); transform-origin: 100% 100%;"></div>
+    </div>
+  </div>
+
+  <input type="range" min="10" max="200" value="95" id="beat-rate">
+
+  <button id="finished-button">Finished</button>
+  <button id="cant-feel-button">I cannot feel my heartbeat</button>
+  <button id="start-task-button">Start Task</button>
+  <button id="end-task-button">End Task</button>
+
+  <div id="beat-rate-text"></div>
+  <div id="confirmation-message"></div>
+
+  <div id="task-label" class="task-label">Baseline</div>
+
+  <script>
+    const subjectIdInput = document.getElementById("subject-id");
+    const subjectIdLabel = document.getElementById("subject-id-label");
+    const startTaskButton = document.getElementById("start-task-button");
+
+    // Disable the "Start Task" button initially
+    startTaskButton.disabled = true;
+
+    // Add event listener to the subject ID input
+    subjectIdInput.addEventListener("keyup", (event) => {
+      if (event.key === "Enter") {
+        subjectIdInput.style.display = "none";
+        subjectIdLabel.style.display = "none";
+        subjectId = subjectIdInput.value; // Store the entered subject ID
+
+        // Enable the "Start Task" button if a subject number is entered
+        if (subjectId.trim() !== "") {
+          startTaskButton.disabled = false;
+        }
+      }
+    });
+
+    const beatRateSlider = document.getElementById("beat-rate");
+    const heartDiv = document.getElementById("heart-div");
+    const beatRateText = document.getElementById("beat-rate-text");
+    const finishedButton = document.getElementById("finished-button");
+    const cantFeelButton = document.getElementById("cant-feel-button");
+    const confirmationMessage = document.getElementById("confirmation-message");
+    const endTaskButton = document.getElementById("end-task-button");
+    const taskLabel = document.getElementById("task-label");
+
+    let sliderMoving = false;
+    let timeoutID;
+    let outputData = "";
+    let recordingStarted = false;
+    let baselineCount = 1;
+    let jjCount = 1;
+    let subjectId = ""; // Variable to store the subject ID
+
+    function pauseAnimation() {
+      heartDiv.classList.add("paused");
+    }
+
+    function resumeAnimation() {
+      heartDiv.classList.remove("paused");
+    }
+
+    beatRateSlider.addEventListener("input", () => {
+      const beatRate = beatRateSlider.value;
+      const animationDuration = (60 / beatRate) + "s";
+      heartDiv.style.animationDuration = animationDuration;
+    });
+
+    beatRateSlider.addEventListener("mousedown", () => {
+      sliderMoving = true;
+      pauseAnimation();
+    });
+
+    beatRateSlider.addEventListener("mousemove", () => {
+      if (sliderMoving) {
+        pauseAnimation();
+      }
+    });
+
+    beatRateSlider.addEventListener("mouseup", () => {
+      sliderMoving = false;
+      resumeAnimation();
+    });
+
+    finishedButton.addEventListener("click", () => {
+      if (recordingStarted) {
+        const beatRate = beatRateSlider.value;
+        beatRateText.style.display = "block";
+        finishedButton.style.display = "none";
+        cantFeelButton.style.display = "none";
+        confirmationMessage.innerHTML = "Response Recorded";
+        confirmationMessage.style.display = "block";
+
+        let output;
+        if (baselineCount === 1) {
+          output = `baseline: ${beatRate}`;
+        } else {
+          output = `JJ${jjCount}: ${beatRate}`;
+          jjCount++;
+        }
+        outputData += output + "\n";
+
+        timeoutID = setTimeout(() => {
+          finishedButton.style.display = "block";
+          cantFeelButton.style.display = "block";
+          beatRateText.style.display = "none";
+          confirmationMessage.style.display = "none";
+          resetTask();
+          increaseCounter();
+        }, 30000);
+      }
+    });
+
+    cantFeelButton.addEventListener("click", () => {
+      if (recordingStarted) {
+        const beatRate = -99;
+        beatRateText.style.display = "block";
+        finishedButton.style.display = "none";
+        cantFeelButton.style.display = "none";
+        confirmationMessage.innerHTML = "Response Recorded";
+        confirmationMessage.style.display = "block";
+
+        let output;
+        if (baselineCount === 1) {
+          output = `baseline: ${beatRate}`;
+        } else {
+          output = `JJ${jjCount}: ${beatRate}`;
+          jjCount++;
+        }
+        outputData += output + "\n";
+
+        timeoutID = setTimeout(() => {
+          finishedButton.style.display = "block";
+          cantFeelButton.style.display = "block";
+          beatRateText.style.display = "none";
+          confirmationMessage.style.display = "none";
+          resetTask();
+          increaseCounter();
+        }, 30000);
+      }
+    });
+
+    startTaskButton.addEventListener("click", () => {
+      if (!recordingStarted && subjectId.trim() !== "") {
+        recordingStarted = true;
+        startTaskButton.disabled = true;
+        endTaskButton.style.display = "block";
+        startTaskButton.style.display = "none";
+        resetTask();
+      }
+    });
+
+    endTaskButton.addEventListener("click", () => {
+      if (recordingStarted) {
+        clearTimeout(timeoutID);
+
+        const endBPM = "END";
+        let output;
+        if (baselineCount === 1) {
+          output = `baseline: ${endBPM}`;
+        } else {
+          output = `JJ${jjCount}: ${endBPM}`;
+        }
+        outputData += output + "\n";
+
+        const beatRateScores = outputData.split("\n").filter(score => score !== "");
+
+        const outputDataString = beatRateScores.join("\n");
+
+        const textFileBlob = new Blob([outputDataString], { type: 'text/plain' });
+        const fileName = `TICTOC_output_${subjectId}.txt`; // Customize the file name with subjectId
+
+        if (window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(textFileBlob, fileName);
+        } else {
+          const downloadLink = document.createElement('a');
+          downloadLink.href = URL.createObjectURL(textFileBlob);
+          downloadLink.download = fileName;
+          downloadLink.click();
+        }
+
+        recordingStarted = false;
+        resetTask();
+      }
+    });
+
+    function resetTask() {
+      beatRateSlider.value = Math.floor(Math.random() * (150 - 20 + 1) + 20);
+      const beatRate = beatRateSlider.value;
+      const animationDuration = (60 / beatRate) + "s";
+      heartDiv.style.animationDuration = animationDuration;
+      beatRateText.innerHTML = "";
+      beatRateText.style.display = "none";
+      finishedButton.style.display = "none";
+      cantFeelButton.style.display = "none";
+      confirmationMessage.innerHTML = "";
+
+      if (recordingStarted) {
+        finishedButton.style.display = "block";
+        cantFeelButton.style.display = "block";
+      }
+    }
+
+    function increaseCounter() {
+      const counterElement = document.getElementById("task-label");
+      counterElement.classList.add("task-label-animation");
+      setTimeout(() => {
+        if (baselineCount === 1) {
+          counterElement.innerText = "JJ1";
+          baselineCount++;
+        } else {
+          const currentCount = parseInt(counterElement.innerText.replace("JJ", ""), 10);
+          const newCount = isNaN(currentCount) ? 1 : currentCount + 1;
+          counterElement.innerText = "JJ" + newCount;
+        }
+        counterElement.classList.remove("task-label-animation");
+      }, 300);
+    }
+
+    function decreaseCounter() {
+      const counterElement = document.getElementById("task-label");
+      counterElement.classList.add("task-label-animation");
+      setTimeout(() => {
+        if (baselineCount === 2 && jjCount === 1) {
+          counterElement.innerText = "Baseline";
+          baselineCount--;
+        } else if (jjCount > 1) {
+          jjCount--;
+          counterElement.innerText = "JJ" + jjCount;
+        }
+        counterElement.classList.remove("task-label-animation");
+      }, 300);
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const finishedButton = document.getElementById("finished-button");
+      const finishedButtonVisible = getComputedStyle(finishedButton).display !== "none";
+
+      if (event.code === "Space" && finishedButtonVisible) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      }
+
+      if (event.code === "ArrowLeft") {
+        event.preventDefault();
+        event.stopPropagation();
+        decreaseCounter();
+      }
+    });
+
+   document.addEventListener("keyup", (event) => {
+  if (event.code === "Space" && recordingStarted) {
+    clearTimeout(timeoutID);
+    finishedButton.style.display = "block";
+    cantFeelButton.style.display = "block";
+    beatRateText.style.display = "none";
+    confirmationMessage.style.display = "none";
+
+    if (finishedButton.style.display !== "none") {
+      resetTask();
+      increaseCounter();
+    }
+  }
+});
+
+  </script>
+</body>
+</html>
