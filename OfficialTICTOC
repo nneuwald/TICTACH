@@ -39,20 +39,20 @@ body {
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 14px;
+      height: 14px;
       background-color: black;
       cursor: pointer;
       border-radius: 50%;
       border: 1px solid black;
-      margin-top: -8px;
+      margin-top: -6px;
       position: relative;
       z-index: 1;
     }
 
     input[type="range"]::-webkit-slider-runnable-track {
       border: none;
-      height: 2px;
+      height: 1.5px;
       background: black;
       position: absolute;
       left: 0;
@@ -66,7 +66,7 @@ body {
       content: "";
       position: absolute;
       height: 14px;
-      width: 4px;
+      width: 2px;
       background-color: black;
       top: 50%;
       transform: translateY(-50%);
@@ -86,8 +86,12 @@ body {
       position: absolute;
       top: 100px;
       left: 40px;
-    }
+  display: none; /* Add this line to hide the slider initially */
 
+    }
+#beat-rate.show-slider {
+  display: block; /* Add this class to show the slider */
+}
     #beat-rate.hide-slider {
       display: none;
     }
@@ -107,7 +111,12 @@ body {
       animation-name: beat;
       animation-duration: 1s;
       animation-iteration-count: infinite;
+  display: none; /* Add this line to hide the heart animation initially */
+
     }
+#heart-div.show-heart {
+  display: block; /* Add this class to show the heart animation */
+}
 
     #heart-div.hide-heart {
       display: none;
@@ -140,7 +149,7 @@ body {
     input[type=range] {
       -webkit-appearance: none;
       appearance: none;
-      height: 8px;
+      height: 5px;
       background-color: lightgray;
       border-radius: 10px;
       outline: none;
@@ -151,36 +160,44 @@ body {
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       background-color: black;
       border-radius: 50%;
       cursor: pointer;
-margin-top: -6px; /* Adjust the value as needed */
+margin-top: -5.5px; /* Adjust the value as needed */
     }
 
     input[type=range]::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       background-color: black;
       border-radius: 50%;
       cursor: pointer;
 margin-top: -6px; /* Adjust the value as needed */
     }
 
-    #finished-button {
-      margin-top: 40px;
-      position: absolute;
-      top: 100px;
-      left: 300px;
-    }
+   #finished-button {
+  margin-top: 40px;
+  position: absolute;
+  top: 100px;
+  left: 300px;
+  display: none; /* Add this line to hide the "Finished" button initially */
+}
 
-    #cant-feel-button {
-      margin-top: 40px;
-      position: absolute;
-      top: 130px;
-      left: 300px;
-    }
+#cant-feel-button {
+  margin-top: 40px;
+  position: absolute;
+  top: 130px;
+  left: 300px;
+  display: none; /* Add this line to hide the "I cannot feel my heartbeat" button initially */
+}
+
+#finished-button.show-button,
+#cant-feel-button.show-button {
+  display: block; /* Add this class to show the buttons */
+}
+
 
     #reset-button {
       margin-top: 40px;
@@ -211,8 +228,8 @@ width: 450px; /* Adjust the width as desired */
     #start-task-button, #end-task-button {
       margin-top: 40px;
       position: absolute;
-      top: 250px;
-      left: 300px;
+      top: 50px;
+      left: 200px;
       background-color: green;
       color: white;
     }
@@ -222,13 +239,19 @@ width: 450px; /* Adjust the width as desired */
     }
 
     .task-label {
-      position: absolute;
-      top: 10px;
-      right: 5px;
-      font-size: 16px;
-      position: relative;
-      animation-duration: 0.3s;
-    }
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  font-size: 16px;
+  position: relative;
+  animation-duration: 0.3s;
+  visibility: hidden;
+
+}
+
+.task-label.show-label {
+  visibility: visible;
+}
 
     .task-label-animation {
       animation-name: moveUp;
@@ -245,7 +268,7 @@ width: 450px; /* Adjust the width as desired */
 #subject-id-container {
       position: absolute;
       top: 10px;
-      right: 10px;
+      right: 150px;
       display: flex;
       align-items: center;
     }
@@ -263,7 +286,10 @@ width: 450px; /* Adjust the width as desired */
       background-color: lightgreen;
     }
 
-
+ #start-task-button {
+      font-size: 20px;
+      padding: 10px 20px;
+    }
   </style>
 </head>
 <body>
@@ -290,10 +316,17 @@ width: 450px; /* Adjust the width as desired */
   <div id="confirmation-message"></div>
 
   <div id="task-label" class="task-label">Baseline 1</div>
+  <audio id="task-audio" src="https://drive.google.com/uc?export=download&id=1NuD0klLjfYqJENsJCE8LTzXmsg4xSw-o"></audio>
+  <audio id="finish-audio" src="https://drive.google.com/uc?export=download&id=1uw-n2hN6A-jZVDQrq5E6n0-HdUVBuMPD"></audio>
+
 <script>
+
   const subjectIdInput = document.getElementById("subject-id");
   const subjectIdLabel = document.getElementById("subject-id-label");
   const startTaskButton = document.getElementById("start-task-button");
+    const taskAudio = document.getElementById("task-audio");
+    const finishAudio = document.getElementById("finish-audio");
+
 
   // Disable the "Start Task" button initially
   startTaskButton.disabled = true;
@@ -317,6 +350,7 @@ width: 450px; /* Adjust the width as desired */
   const beatRateText = document.getElementById("beat-rate-text");
   const finishedButton = document.getElementById("finished-button");
   const cantFeelButton = document.getElementById("cant-feel-button");
+  
   const confirmationMessage = document.getElementById("confirmation-message");
   const endTaskButton = document.getElementById("end-task-button");
   const taskLabel = document.getElementById("task-label");
@@ -360,6 +394,7 @@ width: 450px; /* Adjust the width as desired */
   });
 
   finishedButton.addEventListener("click", () => {
+      finishAudio.play();
     if (recordingStarted) {
       const beatRate = beatRateSlider.value;
       beatRateText.style.display = "block";
@@ -414,6 +449,7 @@ width: 450px; /* Adjust the width as desired */
   });
 
   cantFeelButton.addEventListener("click", () => {
+      finishAudio.play();
     if (recordingStarted) {
       const beatRate = -99;
       beatRateText.style.display = "block";
@@ -467,15 +503,33 @@ width: 450px; /* Adjust the width as desired */
     }
   });
 
-  startTaskButton.addEventListener("click", () => {
-    if (!recordingStarted && subjectId.trim() !== "") {
-      recordingStarted = true;
-      startTaskButton.disabled = true;
-      endTaskButton.style.display = "block";
-      startTaskButton.style.display = "none";
-      resetTask();
-    }
-  });
+ startTaskButton.addEventListener("click", () => {
+taskLabel.classList.add("show-label");
+finishedButton.classList.add("show-button");
+cantFeelButton.classList.add("show-button");
+beatRateSlider.classList.add("show-slider");
+heartDiv.classList.add("show-heart");
+beatRateSlider.classList.remove("hide-slider");
+      taskAudio.play();
+  if (!recordingStarted && subjectId.trim() !== "") {
+const initialBeatRate = beatRateSlider.value;
+const initialAnimationDuration = (60 / initialBeatRate) + "s";
+heartDiv.style.animationDuration = initialAnimationDuration;
+
+    recordingStarted = true;
+    startTaskButton.disabled = true;
+    endTaskButton.style.display = "block";
+    startTaskButton.style.display = "none";
+    resetTask();
+    
+    // Move the slider to 95
+    beatRateSlider.value = 95;
+    const beatRate = beatRateSlider.value;
+    const animationDuration = (60 / beatRate) + "s";
+    heartDiv.style.animationDuration = animationDuration;
+  }
+});
+
 
   function endTask() {
       if (recordingStarted) {
