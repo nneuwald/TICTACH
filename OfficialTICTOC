@@ -325,189 +325,212 @@ width: 450px; /* Adjust the width as desired */
 
 <script>
 
-  const subjectIdInput = document.getElementById("subject-id");
-  const subjectIdLabel = document.getElementById("subject-id-label");
-  const startTaskButton = document.getElementById("start-task-button");
-    const taskAudio = document.getElementById("task-audio");
-    const finishAudio = document.getElementById("finish-audio");
+const subjectIdInput = document.getElementById("subject-id");
+const subjectIdLabel = document.getElementById("subject-id-label");
+const startTaskButton = document.getElementById("start-task-button");
+const taskAudio = document.getElementById("task-audio");
+const finishAudio = document.getElementById("finish-audio");
 
+let baselineTimers = [0, 0, 0];
+let jjTimers = [];
+let currentTimer = 0;
 
-  // Disable the "Start Task" button initially
-  startTaskButton.disabled = true;
+// Disable the "Start Task" button initially
+startTaskButton.disabled = true;
 
-  // Add event listener to the subject ID input
-  subjectIdInput.addEventListener("keyup", (event) => {
-    if (event.key === "Enter") {
-      subjectIdInput.style.display = "none";
-      subjectIdLabel.style.display = "none";
-      subjectId = subjectIdInput.value; // Store the entered subject ID
+// Add event listener to the subject ID input
+subjectIdInput.addEventListener("keyup", (event) => {
+  if (event.key === "Enter") {
+    subjectIdInput.style.display = "none";
+    subjectIdLabel.style.display = "none";
+    subjectId = subjectIdInput.value; // Store the entered subject ID
 
-      // Enable the "Start Task" button if a subject number is entered
-      if (subjectId.trim() !== "") {
-        startTaskButton.disabled = false;
-      }
+    // Enable the "Start Task" button if a subject number is entered
+    if (subjectId.trim() !== "") {
+      startTaskButton.disabled = false;
     }
-  });
-
-  const beatRateSlider = document.getElementById("beat-rate");
-  const heartDiv = document.getElementById("heart-div");
-  const beatRateText = document.getElementById("beat-rate-text");
-  const finishedButton = document.getElementById("finished-button");
-  const cantFeelButton = document.getElementById("cant-feel-button");
-  
-  const confirmationMessage = document.getElementById("confirmation-message");
-  const endTaskButton = document.getElementById("end-task-button");
-  const taskLabel = document.getElementById("task-label");
-
-  let sliderMoving = false;
-  let timeoutID;
-  let outputData = "";
-  let recordingStarted = false;
-  let baselineCount = 1;
-  let jjCount = 1;
-  let subjectId = ""; // Variable to store the subject ID
-
-  function pauseAnimation() {
-    heartDiv.classList.add("paused");
   }
+});
 
-  function resumeAnimation() {
-    heartDiv.classList.remove("paused");
-  }
+const beatRateSlider = document.getElementById("beat-rate");
+const heartDiv = document.getElementById("heart-div");
+const beatRateText = document.getElementById("beat-rate-text");
+const finishedButton = document.getElementById("finished-button");
+const cantFeelButton = document.getElementById("cant-feel-button");
 
-  beatRateSlider.addEventListener("input", () => {
-    const beatRate = beatRateSlider.value;
-    const animationDuration = (60 / beatRate) + "s";
-    heartDiv.style.animationDuration = animationDuration;
-  });
+const confirmationMessage = document.getElementById("confirmation-message");
+const endTaskButton = document.getElementById("end-task-button");
+const taskLabel = document.getElementById("task-label");
 
-  beatRateSlider.addEventListener("mousedown", () => {
-    sliderMoving = true;
+let sliderMoving = false;
+let timeoutID;
+let outputData = "";
+let recordingStarted = false;
+let baselineCount = 1;
+let jjCount = 1;
+let subjectId = ""; // Variable to store the subject ID
+let startTime = 0;
+let endTime = 0;
+
+function pauseAnimation() {
+  heartDiv.classList.add("paused");
+}
+
+function resumeAnimation() {
+  heartDiv.classList.remove("paused");
+}
+
+beatRateSlider.addEventListener("input", () => {
+  const beatRate = beatRateSlider.value;
+  const animationDuration = (60 / beatRate) + "s";
+  heartDiv.style.animationDuration = animationDuration;
+});
+
+beatRateSlider.addEventListener("mousedown", () => {
+  sliderMoving = true;
+  pauseAnimation();
+});
+
+beatRateSlider.addEventListener("mousemove", () => {
+  if (sliderMoving) {
     pauseAnimation();
-  });
+  }
+});
 
-  beatRateSlider.addEventListener("mousemove", () => {
-    if (sliderMoving) {
-      pauseAnimation();
+beatRateSlider.addEventListener("mouseup", () => {
+  sliderMoving = false;
+  resumeAnimation();
+});
+
+finishedButton.addEventListener("click", () => {
+  finishAudio.play();
+  if (recordingStarted) {
+    endTime = Date.now(); // Get the end time of the current interval
+    const timeSpent = endTime - startTime; // Calculate the time spent on the current interval in milliseconds
+
+    const beatRate = beatRateSlider.value;
+    beatRateText.style.display = "block";
+    finishedButton.style.display = "none";
+    cantFeelButton.style.display = "none";
+    let confirmationMessageText =
+      "Response Recorded. Please complete the confidence scale. When you're done, continue to silently sense your heartbeat. When the animation returns, complete the task again.";
+
+    if (baselineCount === 3) {
+      confirmationMessageText =
+        "<span style='color: darkgreen;'>Baseline Complete. Please complete the confidence scale. When you're done, the research assistant will now explain the next step</span>";
+
+      timeoutID = setTimeout(() => {
+        finishedButton.style.display = "block";
+        cantFeelButton.style.display = "block";
+        beatRateText.style.display = "none";
+        confirmationMessage.style.display = "none";
+        beatRateSlider.classList.remove("hide-slider");
+        heartDiv.classList.remove("hide-heart");
+        resetTask();
+        increaseCounter();
+      }, 3000000); // Delay changed to 5 hours
+    } else {
+      timeoutID = setTimeout(() => {
+        finishedButton.style.display = "block";
+        cantFeelButton.style.display = "block";
+        beatRateText.style.display = "none";
+        confirmationMessage.style.display = "none";
+        beatRateSlider.classList.remove("hide-slider");
+        heartDiv.classList.remove("hide-heart");
+        resetTask();
+        increaseCounter();
+      }, 30000); // Default delay for other tasks (30,000 milliseconds)
     }
-  });
 
-  beatRateSlider.addEventListener("mouseup", () => {
-    sliderMoving = false;
-    resumeAnimation();
-  });
+    confirmationMessage.innerHTML = confirmationMessageText;
+    confirmationMessage.style.display = "block";
+    beatRateSlider.classList.add("hide-slider");
+    heartDiv.classList.add("hide-heart");
 
-  finishedButton.addEventListener("click", () => {
-      finishAudio.play();
-    if (recordingStarted) {
-      const beatRate = beatRateSlider.value;
-      beatRateText.style.display = "block";
-      finishedButton.style.display = "none";
-      cantFeelButton.style.display = "none";
-      let confirmationMessageText = "Response Recorded. Please complete the confidence scale. When you're done, continue to silently sense your heartbeat. When the animation returns, complete the task again.";
-
-      if (baselineCount === 3) {
-        confirmationMessageText = "<span style='color: darkgreen;'>Baseline Complete. Please complete the confidence scale. When you're done, the research assistant will now explain the next step</span>";
-
-        timeoutID = setTimeout(() => {
-          finishedButton.style.display = "block";
-          cantFeelButton.style.display = "block";
-          beatRateText.style.display = "none";
-          confirmationMessage.style.display = "none";
-          beatRateSlider.classList.remove("hide-slider");
-          heartDiv.classList.remove("hide-heart");
-          resetTask();
-          increaseCounter();
-        }, 3000000); // Delay changed to 5 hours
-      } else {
-        timeoutID = setTimeout(() => {
-          finishedButton.style.display = "block";
-          cantFeelButton.style.display = "block";
-          beatRateText.style.display = "none";
-          confirmationMessage.style.display = "none";
-          beatRateSlider.classList.remove("hide-slider");
-          heartDiv.classList.remove("hide-heart");
-          resetTask();
-          increaseCounter();
-        }, 30000); // Default delay for other tasks (30,000 milliseconds)
-      }
-
-      confirmationMessage.innerHTML = confirmationMessageText;
-      confirmationMessage.style.display = "block";
-      beatRateSlider.classList.add("hide-slider");
-      heartDiv.classList.add("hide-heart");
-
-      let output;
-      if (baselineCount === 1) {
-        output = `Baseline ${baselineCount}: ${beatRate}`;
-      } else if (baselineCount === 2) {
-        output = `Baseline ${baselineCount}: ${beatRate}`;
-      } else if (baselineCount === 3) {
-        output = `Baseline ${baselineCount}: ${beatRate}`;
-      } else {
-        output = `JJ${jjCount}: ${beatRate}`;
-        jjCount++;
-      }
-      outputData += output + "\n";
+    let output;
+    if (baselineCount === 1) {
+      output = `Baseline ${baselineCount}: ${beatRate} (Time spent: ${timeSpent}ms)`;
+      baselineTimers[0] += timeSpent;
+    } else if (baselineCount === 2) {
+      output = `Baseline ${baselineCount}: ${beatRate} (Time spent: ${timeSpent}ms)`;
+      baselineTimers[1] += timeSpent;
+    } else if (baselineCount === 3) {
+      output = `Baseline ${baselineCount}: ${beatRate} (Time spent: ${timeSpent}ms)`;
+      baselineTimers[2] += timeSpent;
+    } else {
+      output = `JJ${jjCount}: ${beatRate} (Time spent: ${timeSpent}ms)`;
+      jjTimers.push(timeSpent);
+      jjCount++;
     }
-  });
+    outputData += output + "\n";
+  }
+});
 
-  cantFeelButton.addEventListener("click", () => {
-      finishAudio.play();
-    if (recordingStarted) {
-      const beatRate = -99;
-      beatRateText.style.display = "block";
-      finishedButton.style.display = "none";
-      cantFeelButton.style.display = "none";
-      let confirmationMessageText = "Response Recorded. Please complete the confidence scale. When you're done, continue to silently sense your heartbeat. When the animation returns, complete the task again.";
+cantFeelButton.addEventListener("click", () => {
+  finishAudio.play();
+  if (recordingStarted) {
+    endTime = Date.now(); // Get the end time of the current interval
+    const timeSpent = endTime - startTime; // Calculate the time spent on the current interval in milliseconds
 
-      if (baselineCount === 3) {
-        confirmationMessageText = "<span style='color: darkgreen;'>Baseline Complete. Please complete the confidence scale. When you're done, the research assistant will now explain the next step</span>";
+    const beatRate = -99;
+    beatRateText.style.display = "block";
+    finishedButton.style.display = "none";
+    cantFeelButton.style.display = "none";
+    let confirmationMessageText =
+      "Response Recorded. Please complete the confidence scale. When you're done, continue to silently sense your heartbeat. When the animation returns, complete the task again.";
 
-        timeoutID = setTimeout(() => {
-          finishedButton.style.display = "block";
-          cantFeelButton.style.display = "block";
-          beatRateText.style.display = "none";
-          confirmationMessage.style.display = "none";
-          beatRateSlider.classList.remove("hide-slider");
-          heartDiv.classList.remove("hide-heart");
-          resetTask();
-          increaseCounter();
-        }, 3000000); // Delay changed (3,000,000 milliseconds)
-      } else {
-        timeoutID = setTimeout(() => {
-          finishedButton.style.display = "block";
-          cantFeelButton.style.display = "block";
-          beatRateText.style.display = "none";
-          confirmationMessage.style.display = "none";
-          beatRateSlider.classList.remove("hide-slider");
-          heartDiv.classList.remove("hide-heart");
-          resetTask();
-          increaseCounter();
-        }, 30000); // Default delay for other tasks (30,000 milliseconds)
-      }
+    if (baselineCount === 3) {
+      confirmationMessageText =
+        "<span style='color: darkgreen;'>Baseline Complete. Please complete the confidence scale. When you're done, the research assistant will now explain the next step</span>";
 
-      confirmationMessage.innerHTML = confirmationMessageText;
-      confirmationMessage.style.display = "block";
-      beatRateSlider.classList.add("hide-slider");
-      heartDiv.classList.add("hide-heart");
-
-      let output;
-      if (baselineCount === 1) {
-        output = `Baseline ${baselineCount}: ${beatRate}`;
-      } else if (baselineCount === 2) {
-        output = `Baseline ${baselineCount}: ${beatRate}`;
-      } else if (baselineCount === 3) {
-        output = `Baseline ${baselineCount}: ${beatRate}`;
-      } else {
-        output = `JJ${jjCount}: ${beatRate}`;
-        jjCount++;
-      }
-      outputData += output + "\n";
+      timeoutID = setTimeout(() => {
+        finishedButton.style.display = "block";
+        cantFeelButton.style.display = "block";
+        beatRateText.style.display = "none";
+        confirmationMessage.style.display = "none";
+        beatRateSlider.classList.remove("hide-slider");
+        heartDiv.classList.remove("hide-heart");
+        resetTask();
+        increaseCounter();
+      }, 3000000); // Delay changed (3,000,000 milliseconds)
+    } else {
+      timeoutID = setTimeout(() => {
+        finishedButton.style.display = "block";
+        cantFeelButton.style.display = "block";
+        beatRateText.style.display = "none";
+        confirmationMessage.style.display = "none";
+        beatRateSlider.classList.remove("hide-slider");
+        heartDiv.classList.remove("hide-heart");
+        resetTask();
+        increaseCounter();
+      }, 30000); // Default delay for other tasks (30,000 milliseconds)
     }
-  });
 
- startTaskButton.addEventListener("click", () => {
+    confirmationMessage.innerHTML = confirmationMessageText;
+    confirmationMessage.style.display = "block";
+    beatRateSlider.classList.add("hide-slider");
+    heartDiv.classList.add("hide-heart");
+
+    let output;
+    if (baselineCount === 1) {
+      output = `Baseline ${baselineCount}: ${beatRate} (Time spent: ${timeSpent}ms)`;
+      baselineTimers[0] += timeSpent;
+    } else if (baselineCount === 2) {
+      output = `Baseline ${baselineCount}: ${beatRate} (Time spent: ${timeSpent}ms)`;
+      baselineTimers[1] += timeSpent;
+    } else if (baselineCount === 3) {
+      output = `Baseline ${baselineCount}: ${beatRate} (Time spent: ${timeSpent}ms)`;
+      baselineTimers[2] += timeSpent;
+    } else {
+      output = `JJ${jjCount}: ${beatRate} (Time spent: ${timeSpent}ms)`;
+      jjTimers.push(timeSpent);
+      jjCount++;
+    }
+    outputData += output + "\n";
+  }
+});
+
+startTaskButton.addEventListener("click", () => {
   taskLabel.classList.add("show-label");
   finishedButton.classList.add("show-button");
   cantFeelButton.classList.add("show-button");
@@ -536,6 +559,9 @@ width: 450px; /* Adjust the width as desired */
     // Disable the "Finished" and "I cannot feel my heartbeat" buttons initially
     finishedButton.disabled = true;
     cantFeelButton.disabled = true;
+
+    // Set the start time of the current interval
+    startTime = Date.now();
   }
 });
 
@@ -548,137 +574,140 @@ beatRateSlider.addEventListener("mousedown", () => {
   cantFeelButton.disabled = false;
 });
 
+function endTask() {
+  if (recordingStarted) {
+    clearTimeout(timeoutID);
 
+    const endBPM = "END";
+    let output;
+    if (baselineCount === 1) {
+      output = `Baseline ${baselineCount}: ${endBPM}`;
+    } else if (baselineCount === 2) {
+      output = `Baseline ${baselineCount}: ${endBPM}`;
+    } else {
+      output = `JJ${jjCount}: ${endBPM}`;
+    }
+    outputData += output + "\n";
 
-  function endTask() {
-      if (recordingStarted) {
-        clearTimeout(timeoutID);
+    const beatRateScores = outputData.split("\n").filter(score => score !== "");
 
-        const endBPM = "END";
-        let output;
-        if (baselineCount === 1) {
-          output = `Baseline ${baselineCount}: ${endBPM}`;
-        } else if (baselineCount === 2) {
-          output = `Baseline ${baselineCount}: ${endBPM}`;
-        } else {
-          output = `JJ${jjCount}: ${endBPM}`;
-        }
-        outputData += output + "\n";
+    const outputDataString = beatRateScores.join("\n");
 
-        const beatRateScores = outputData.split("\n").filter(score => score !== "");
+    const textFileBlob = new Blob([outputDataString], { type: 'text/plain' });
+    const fileName = `TICTOC_output_${subjectId}.txt`; // Customize the file name with subjectId
 
-        const outputDataString = beatRateScores.join("\n");
-
-        const textFileBlob = new Blob([outputDataString], { type: 'text/plain' });
-        const fileName = `TICTOC_output_${subjectId}.txt`; // Customize the file name with subjectId
-
-        if (window.navigator.msSaveOrOpenBlob) {
-          window.navigator.msSaveOrOpenBlob(textFileBlob, fileName);
-        } else {
-          const downloadLink = document.createElement('a');
-          downloadLink.href = URL.createObjectURL(textFileBlob);
-          downloadLink.download = fileName;
-          downloadLink.click();
-        }
-
-        recordingStarted = false;
-        resetTask();
-      }
+    if (window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(textFileBlob, fileName);
+    } else {
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(textFileBlob);
+      downloadLink.download = fileName;
+      downloadLink.click();
     }
 
-    // Add event listener to the escape key
-    document.addEventListener("keyup", (event) => {
-      if (event.code === "Escape") {
-        event.preventDefault();
-        event.stopPropagation();
-        endTask();
-      }
-    });
+    recordingStarted = false;
+    resetTask();
+  }
+}
 
+// Add event listener to the escape key
+document.addEventListener("keyup", (event) => {
+  if (event.code === "Escape") {
+    event.preventDefault();
+    event.stopPropagation();
+    endTask();
+  }
+});
 
-  function resetTask() {
-    beatRateSlider.value = Math.floor(Math.random() * (150 - 20 + 1) + 20);
-    const beatRate = beatRateSlider.value;
-    const animationDuration = (60 / beatRate) + "s";
-    heartDiv.style.animationDuration = animationDuration;
-    beatRateText.innerHTML = "";
+function resetTask() {
+  beatRateSlider.value = Math.floor(Math.random() * (150 - 20 + 1) + 20);
+  const beatRate = beatRateSlider.value;
+  const animationDuration = (60 / beatRate) + "s";
+  heartDiv.style.animationDuration = animationDuration;
+  beatRateText.innerHTML = "";
+  beatRateText.style.display = "none";
+  finishedButton.style.display = "none";
+  cantFeelButton.style.display = "none";
+  confirmationMessage.innerHTML = "";
+
+  // Set the start time of the current interval to 0
+  startTime = 0;
+
+  if (recordingStarted) {
+    finishedButton.style.display = "block";
+    cantFeelButton.style.display = "block";
+  }
+}
+
+function increaseCounter() {
+  const counterElement = document.getElementById("task-label");
+  counterElement.classList.add("task-label-animation");
+  setTimeout(() => {
+    if (baselineCount === 1) {
+      counterElement.innerText = "Baseline 2";
+      baselineCount++;
+    } else if (baselineCount === 2) {
+      counterElement.innerText = "Baseline 3";
+      baselineCount++;
+    } else if (baselineCount === 3) {
+      const currentCount = parseInt(counterElement.innerText.replace("JJ", ""), 10);
+      const newCount = isNaN(currentCount) ? 1 : currentCount + 1;
+      counterElement.innerText = "JJ" + newCount;
+      baselineCount++;
+    } else {
+      const currentCount = parseInt(counterElement.innerText.replace("JJ", ""), 10);
+      const newCount = isNaN(currentCount) ? 1 : currentCount + 1;
+      counterElement.innerText = "JJ" + newCount;
+    }
+    counterElement.classList.remove("task-label-animation");
+  }, 300);
+  // Enable the "Finished" and "I cannot feel my heartbeat" buttons for the current interval
+  finishedButton.disabled = true;
+  cantFeelButton.disabled = true;
+
+  // Set the start time of the current interval
+  startTime = Date.now();
+}
+
+document.addEventListener("keydown", (event) => {
+  const finishedButton = document.getElementById("finished-button");
+  const finishedButtonVisible = getComputedStyle(finishedButton).display !== "none";
+
+  if (event.code === "Space" && finishedButtonVisible) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  }
+});
+
+document.addEventListener("keyup", (event) => {
+  if (event.code === "Space" && recordingStarted) {
+    clearTimeout(timeoutID);
+    finishedButton.style.display = "block";
+    cantFeelButton.style.display = "block";
     beatRateText.style.display = "none";
-    finishedButton.style.display = "none";
-    cantFeelButton.style.display = "none";
-    confirmationMessage.innerHTML = "";
+    confirmationMessage.style.display = "none";
+    beatRateSlider.classList.remove("hide-slider");
+    heartDiv.classList.remove("hide-heart");
 
-    if (recordingStarted) {
-      finishedButton.style.display = "block";
-      cantFeelButton.style.display = "block";
+    if (finishedButton.style.display !== "none") {
+      resetTask();
+      increaseCounter();
     }
   }
+});
 
-  function increaseCounter() {
+document.addEventListener("keyup", (event) => {
+  if (event.code === "Backspace") {
     const counterElement = document.getElementById("task-label");
-    counterElement.classList.add("task-label-animation");
-    setTimeout(() => {
-      if (baselineCount === 1) {
-        counterElement.innerText = "Baseline 2";
-        baselineCount++;
-      } else if (baselineCount === 2) {
-        counterElement.innerText = "Baseline 3";
-        baselineCount++;
-      } else if (baselineCount === 3) {
-        const currentCount = parseInt(counterElement.innerText.replace("JJ", ""), 10);
-        const newCount = isNaN(currentCount) ? 1 : currentCount + 1;
-        counterElement.innerText = "JJ" + newCount;
-        baselineCount++;
-      } else {
-        const currentCount = parseInt(counterElement.innerText.replace("JJ", ""), 10);
-        const newCount = isNaN(currentCount) ? 1 : currentCount + 1;
-        counterElement.innerText = "JJ" + newCount;
-      }
-      counterElement.classList.remove("task-label-animation");
-    }, 300);
-// Enable the "Finished" and "I cannot feel my heartbeat" buttons for the current interval
-      finishedButton.disabled = true;
-      cantFeelButton.disabled = true;
-   
+    counterElement.innerText = "Baseline 1";
+    baselineCount = 1;
   }
+});
 
-  document.addEventListener("keydown", (event) => {
-    const finishedButton = document.getElementById("finished-button");
-    const finishedButtonVisible = getComputedStyle(finishedButton).display !== "none";
 
-    if (event.code === "Space" && finishedButtonVisible) {
-      event.preventDefault();
-      event.stopPropagation();
-      return false;
-    }
-  });
-
-  document.addEventListener("keyup", (event) => {
-    if (event.code === "Space" && recordingStarted) {
-      clearTimeout(timeoutID);
-      finishedButton.style.display = "block";
-      cantFeelButton.style.display = "block";
-      beatRateText.style.display = "none";
-      confirmationMessage.style.display = "none";
-      beatRateSlider.classList.remove("hide-slider");
-      heartDiv.classList.remove("hide-heart");
-
-      if (finishedButton.style.display !== "none") {
-        resetTask();
-        increaseCounter();
-      }
-    }
-  });
-
-  document.addEventListener("keyup", (event) => {
-    if (event.code === "Backspace") {
-      const counterElement = document.getElementById("task-label");
-      counterElement.innerText = "Baseline 1";
-      baselineCount = 1;
-    }
-  });
 </script>
 
 
 </body>
 </html>
-
