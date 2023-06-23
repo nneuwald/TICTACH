@@ -418,7 +418,7 @@ width: 450px; /* Adjust the width as desired */
           heartDiv.classList.remove("hide-heart");
           resetTask();
           increaseCounter();
-        }, 300000); // Delay changed to 5 minutes (300,000 milliseconds)
+        }, 3000000); // Delay changed to 5 hours
       } else {
         timeoutID = setTimeout(() => {
           finishedButton.style.display = "block";
@@ -508,31 +508,46 @@ width: 450px; /* Adjust the width as desired */
   });
 
  startTaskButton.addEventListener("click", () => {
-taskLabel.classList.add("show-label");
-finishedButton.classList.add("show-button");
-cantFeelButton.classList.add("show-button");
-beatRateSlider.classList.add("show-slider");
-heartDiv.classList.add("show-heart");
-beatRateSlider.classList.remove("hide-slider");
-      taskAudio.play();
+  taskLabel.classList.add("show-label");
+  finishedButton.classList.add("show-button");
+  cantFeelButton.classList.add("show-button");
+  beatRateSlider.classList.add("show-slider");
+  heartDiv.classList.add("show-heart");
+  beatRateSlider.classList.remove("hide-slider");
+  taskAudio.play();
+
   if (!recordingStarted && subjectId.trim() !== "") {
-const initialBeatRate = beatRateSlider.value;
-const initialAnimationDuration = (60 / initialBeatRate) + "s";
-heartDiv.style.animationDuration = initialAnimationDuration;
+    const initialBeatRate = beatRateSlider.value;
+    const initialAnimationDuration = (60 / initialBeatRate) + "s";
+    heartDiv.style.animationDuration = initialAnimationDuration;
 
     recordingStarted = true;
     startTaskButton.disabled = true;
     endTaskButton.style.display = "block";
     startTaskButton.style.display = "none";
     resetTask();
-    
+
     // Move the slider to 95
     beatRateSlider.value = 95;
     const beatRate = beatRateSlider.value;
     const animationDuration = (60 / beatRate) + "s";
     heartDiv.style.animationDuration = animationDuration;
+
+    // Disable the "Finished" and "I cannot feel my heartbeat" buttons initially
+    finishedButton.disabled = true;
+    cantFeelButton.disabled = true;
   }
 });
+
+beatRateSlider.addEventListener("mousedown", () => {
+  sliderMoving = true;
+  pauseAnimation();
+
+  // Enable the "Finished" and "I cannot feel my heartbeat" buttons
+  finishedButton.disabled = false;
+  cantFeelButton.disabled = false;
+});
+
 
 
   function endTask() {
@@ -620,6 +635,10 @@ heartDiv.style.animationDuration = initialAnimationDuration;
       }
       counterElement.classList.remove("task-label-animation");
     }, 300);
+// Enable the "Finished" and "I cannot feel my heartbeat" buttons for the current interval
+      finishedButton.disabled = true;
+      cantFeelButton.disabled = true;
+   
   }
 
   document.addEventListener("keydown", (event) => {
@@ -662,3 +681,4 @@ heartDiv.style.animationDuration = initialAnimationDuration;
 
 </body>
 </html>
+
