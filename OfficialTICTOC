@@ -515,7 +515,7 @@ width: 450px; /* Adjust the width as desired */
 
         let output;
         if (baselineCount === 1) {
-          output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms)`;
+          output = `Baseline ${baselineCount}: 95 -> ${beatRate} (Time spent: ${timeSpent}ms)`;
           baselineTimers[0] += timeSpent;
         } else if (baselineCount === 2) {
           output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms)`;
