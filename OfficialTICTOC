@@ -439,7 +439,7 @@ width: 450px; /* Adjust the width as desired */
             heartDiv.classList.remove("hide-heart");
             resetTask();
             increaseCounter();
-          }, 30000); // Default delay for other tasks (30,000 milliseconds)
+          }, 20000); // Default delay for other tasks (30,000 milliseconds)
         }
 
         confirmationMessage.innerHTML = confirmationMessageText;
@@ -447,22 +447,22 @@ width: 450px; /* Adjust the width as desired */
         beatRateSlider.classList.add("hide-slider");
         heartDiv.classList.add("hide-heart");
 
-        let output;
-        if (baselineCount === 1) {
-          output = `Baseline ${baselineCount}: 95 -> ${beatRate} (Time spent: ${timeSpent}ms)`;
-          baselineTimers[0] += timeSpent;
-        } else if (baselineCount === 2) {
-          output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms)`;
-          baselineTimers[1] += timeSpent;
-        } else if (baselineCount === 3) {
-          output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms)`;
-          baselineTimers[2] += timeSpent;
-        } else {
-          output = `JJ${jjCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms)`;
-          jjTimers.push(timeSpent);
-          jjCount++;
-        }
-        outputData += output + "\n"; // Record the slider value in the output data
+      let output;
+  if (baselineCount === 1) {
+    output = `Baseline ${baselineCount}: 95 -> ${beatRate} (Time spent: ${timeSpent}ms, Timestamp: ${getCurrentTimestamp()})`;
+    baselineTimers[0] += timeSpent;
+  } else if (baselineCount === 2) {
+    output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms, Timestamp: ${getCurrentTimestamp()})`;
+    baselineTimers[1] += timeSpent;
+  } else if (baselineCount === 3) {
+    output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms, Timestamp: ${getCurrentTimestamp()})`;
+    baselineTimers[2] += timeSpent;
+  } else {
+    output = `JJ${jjCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms, Timestamp: ${getCurrentTimestamp()})`;
+    jjTimers.push(timeSpent);
+    jjCount++;
+  }
+  outputData += output + "\n"; // Record the slider value in the output data
 
         previousSliderValue = beatRate; // Update the previous slider value for the next interval
       }
@@ -505,7 +505,7 @@ width: 450px; /* Adjust the width as desired */
             heartDiv.classList.remove("hide-heart");
             resetTask();
             increaseCounter();
-          }, 30000); // Default delay for other tasks (30,000 milliseconds)
+          }, 20000); // Default delay for other tasks (30,000 milliseconds)
         }
 
         confirmationMessage.innerHTML = confirmationMessageText;
@@ -513,26 +513,31 @@ width: 450px; /* Adjust the width as desired */
         beatRateSlider.classList.add("hide-slider");
         heartDiv.classList.add("hide-heart");
 
-        let output;
-        if (baselineCount === 1) {
-          output = `Baseline ${baselineCount}: 95 -> ${beatRate} (Time spent: ${timeSpent}ms)`;
-          baselineTimers[0] += timeSpent;
-        } else if (baselineCount === 2) {
-          output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms)`;
-          baselineTimers[1] += timeSpent;
-        } else if (baselineCount === 3) {
-          output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms)`;
-          baselineTimers[2] += timeSpent;
-        } else {
-          output = `JJ${jjCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms)`;
-          jjTimers.push(timeSpent);
-          jjCount++;
-        }
-        outputData += output + "\n"; // Record the slider value in the output data
+         let output;
+  if (baselineCount === 1) {
+    output = `Baseline ${baselineCount}: 95 -> ${beatRate} (Time spent: ${timeSpent}ms, Timestamp: ${getCurrentTimestamp()})`;
+    baselineTimers[0] += timeSpent;
+  } else if (baselineCount === 2) {
+    output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms, Timestamp: ${getCurrentTimestamp()})`;
+    baselineTimers[1] += timeSpent;
+  } else if (baselineCount === 3) {
+    output = `Baseline ${baselineCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms, Timestamp: ${getCurrentTimestamp()})`;
+    baselineTimers[2] += timeSpent;
+  } else {
+    output = `JJ${jjCount}: ${previousSliderValue} -> ${beatRate} (Time spent: ${timeSpent}ms, Timestamp: ${getCurrentTimestamp()})`;
+    jjTimers.push(timeSpent);
+    jjCount++;
+  }
+  outputData += output + "\n"; // Record the slider value in the output data data
 
         previousSliderValue = beatRate; // Update the previous slider value for the next interval
       }
     });
+function getCurrentTimestamp() {
+  const date = new Date();
+  const timestamp = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  return timestamp;
+}
 
     startTaskButton.addEventListener("click", () => {
       taskLabel.classList.add("show-label");
