@@ -212,7 +212,7 @@ margin-top: -6px; /* Adjust the value as needed */
 #cant-feel-button {
   margin-top: 40px;
   position: absolute;
-  top: 310px;
+  top: 250px;
   left: 410px;
   display: none; /* Add this line to hide the "I cannot feel my heartbeat" button initially */
 }
@@ -266,7 +266,7 @@ width: 565px; /* Adjust the width as desired */
 
     #task-label {
   position: absolute;
-  top: 350px;
+  top: 295px;
   left: 10px;
   font-size: 16px;
   animation-duration: 0.2s;
@@ -313,14 +313,8 @@ width: 565px; /* Adjust the width as desired */
     }
 
  #start-task-button {
-      font-size: 20px;	
+      font-size: 20px;
       padding: 10px 20px;
-    }
-#slider-text {
-      position: absolute;
-      top: 200px; /* Adjust the top value as needed */
-      font-family: Arial, sans-serif; /* Set the font family to Arial */
-      font-size: 18px; /* Adjust the font size as needed */
     }
 #confidence-scale-container {
      visibility: hidden;
@@ -391,10 +385,10 @@ width: 565px; /* Adjust the width as desired */
 
 
 
-<div id="task-label" class="task-label hide-label"></div>
+<div id="task-label" class="task-label hide-label">Baseline 1</div>
   <audio id="task-audio" src="https://drive.google.com/uc?export=download&id=1NuD0klLjfYqJENsJCE8LTzXmsg4xSw-o"></audio>
   <audio id="finish-audio" src="https://drive.google.com/uc?export=download&id=1uw-n2hN6A-jZVDQrq5E6n0-HdUVBuMPD"></audio>
-    <p id="slider-text" style="display: none;">Try and sense your heartbeat without taking your pulse. You may close your eyes if this helps. When you feel ready, adjust the cartoon heart so that it matches your own internal heartbeat. Move the slider to the left to slow the heart or to the right to speed the heart up. Click finished when you are done. If you cannot feel your own heartbeat at all, click I cannot feel my heartbeat.</p>
+
 <script>
     const subjectIdInput = document.getElementById("subject-id");
     const subjectIdLabel = document.getElementById("subject-id-label");
@@ -441,7 +435,6 @@ let sliderClicked = false;
 
     const beatRateSlider = document.getElementById("beat-rate");
     const heartDiv = document.getElementById("heart-div");
-    const sliderText = document.getElementById("slider-text");
     const beatRateText = document.getElementById("beat-rate-text");
     const finishedButton = document.getElementById("finished-button");
     const cantFeelButton = document.getElementById("cant-feel-button");
@@ -504,23 +497,21 @@ const timeSpent2 = endTime - startTime2; // Calculate the time spent on the curr
 
         const beatRate = beatRateSlider.value;
         beatRateText.style.display = "block";
-      sliderText.style.display = "none";
         finishedButton.style.display = "none";
             confirmationMessage.style.display = "block";
 
         cantFeelButton.style.display = "none";
     
         let confirmationMessageText =
-          "Task Complete. Press spacebar to practice again.";
+          "Continue to silently sense your heartbeat. When the cartoon heart returns, complete the task again.";
 
         if (baselineCount === 3) {
           confirmationMessageText =
-            "Task Complete. Press spacebar to practice again.";
+            "<span style='color: darkgreen;'>Baseline Complete. The research assistant will now explain the next step</span>";
 
           timeoutID = setTimeout(() => {
             finishedButton.style.display = "block";
             cantFeelButton.style.display = "block";
-      sliderText.style.display = "block";
             beatRateText.style.display = "none";
             confirmationMessage.style.display = "block";
        
@@ -536,7 +527,6 @@ const timeSpent2 = endTime - startTime2; // Calculate the time spent on the curr
           timeoutID = setTimeout(() => {
             finishedButton.style.display = "block";
             cantFeelButton.style.display = "block";
-      sliderText.style.display = "block";
             beatRateText.style.display = "none";
             confirmationMessage.style.display = "block";
     
@@ -615,23 +605,21 @@ confidenceScale.addEventListener("input", () => {
         const beatRate = -99;
         beatRateText.style.display = "block";
         finishedButton.style.display = "none";
-      sliderText.style.display = "none";
         cantFeelButton.style.display = "none";
             confirmationMessage.style.display = "block";
 
 
         let confirmationMessageText =
-          "Task Complete. Press spacebar to practice again.";
+          "Continue to silently sense your heartbeat. When the cartoon heart returns, complete the task again.";
 
         if (baselineCount === 3) {
           confirmationMessageText =
-            "Task Complete. Press spacebar to practice again.";
+            "<span style='color: darkgreen;'>Baseline Complete. The research assistant will now explain the next step</span>";
 
           timeoutID = setTimeout(() => {
 
             finishedButton.style.display = "block";
             cantFeelButton.style.display = "block";
-      sliderText.style.display = "block";
             beatRateText.style.display = "none";
             confirmationMessage.style.display = "block";
     
@@ -647,7 +635,6 @@ confidenceScale.addEventListener("input", () => {
 
             finishedButton.style.display = "block";
             cantFeelButton.style.display = "block";
-      sliderText.style.display = "block";
             beatRateText.style.display = "none";
             confirmationMessage.style.display = "block";
     
@@ -702,7 +689,6 @@ function getCurrentTimestamp() {
     sliderInstructions.style.display = "block";
 
       cantFeelButton.classList.add("show-button");
-      sliderText.style.display = "block";
       beatRateSlider.classList.add("show-slider");
       heartDiv.classList.add("show-heart");
       beatRateSlider.classList.remove("hide-slider");
@@ -774,7 +760,7 @@ beatRateSlider.addEventListener("mouseup", () => {
         const outputDataString = beatRateScores.join("\n");
 
         const textFileBlob = new Blob([outputDataString], { type: 'text/plain' });
-        const fileName = `TICTOC_output_${subjectId}.txt`; // Customize the file name with subjectId
+        const fileName = `TICTOC_REACH_${subjectId}.txt`; // Customize the file name with subjectId
 
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveOrOpenBlob(textFileBlob, fileName);
@@ -848,7 +834,6 @@ previousSliderValue = beatRateSlider.value;
       beatRateText.style.display = "none";
       finishedButton.style.display = "none";
       cantFeelButton.style.display = "none";
-      sliderText.style.display = "block";
       confirmationMessage.innerHTML = "";
   sliderInstructions.style.display = "block";
 
@@ -860,7 +845,6 @@ timeSpent = 0
       if (recordingStarted) {
         finishedButton.style.display = "block";
         cantFeelButton.style.display = "block";
-      sliderText.style.display = "block";
       }
     }
 
@@ -869,20 +853,20 @@ timeSpent = 0
       counterElement.classList.add("task-label-animation");
       setTimeout(() => {
         if (baselineCount === 1) {
-          counterElement.innerText = "";
+          counterElement.innerText = "Baseline 2";
           baselineCount++;
         } else if (baselineCount === 2) {
-          counterElement.innerText = "";
+          counterElement.innerText = "Baseline 3";
           baselineCount++;
         } else if (baselineCount === 3) {
-          const currentCount = parseInt(counterElement.innerText.replace(""), 10);
+          const currentCount = parseInt(counterElement.innerText.replace("JJ", ""), 10);
           const newCount = isNaN(currentCount) ? 1 : currentCount + 1;
-          counterElement.innerText = "";
+          counterElement.innerText = "JJ" + newCount;
           baselineCount++;
         } else {
-          const currentCount = parseInt(counterElement.innerText.replace(""), 10);
+          const currentCount = parseInt(counterElement.innerText.replace("JJ", ""), 10);
           const newCount = isNaN(currentCount) ? 1 : currentCount + 1;
-          counterElement.innerText = "";
+          counterElement.innerText = "JJ" + newCount;
         }
         counterElement.classList.remove("task-label-animation");
       }, 300);
@@ -915,7 +899,6 @@ event.preventDefault();
 
         finishedButton.style.display = "block";
         cantFeelButton.style.display = "block";
-      sliderText.style.display = "block";
         beatRateText.style.display = "none";
         confirmationMessage.style.display = "block";
         beatRateSlider.classList.remove("hide-slider");
