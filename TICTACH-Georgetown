@@ -760,7 +760,7 @@ beatRateSlider.addEventListener("mouseup", () => {
         const outputDataString = beatRateScores.join("\n");
 
         const textFileBlob = new Blob([outputDataString], { type: 'text/plain' });
-        const fileName = `TICTOC_output_${subjectId}.txt`; // Customize the file name with subjectId
+        const fileName = `TICTACH_output_${subjectId}.txt`; // Customize the file name with subjectId
 
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveOrOpenBlob(textFileBlob, fileName);
