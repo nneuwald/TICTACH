@@ -141,6 +141,8 @@
       font-size: 12px;
       margin-top: 0px;
       margin-left: 10px;
+  display: block;
+
     }
 
     #subject-id-container {
@@ -176,7 +178,7 @@ visibility: hidden
 </head>
 <body>
   <div id="subject-id-container">
-    <label for="subject-id" id="subject-id-label">Subject ID:</label>
+    <label for="subject-id" id="subject-id-label"><b>Subject ID:</b></label>
     <input type="text" id="subject-id" name="subject-id">
   </div>
 
@@ -261,6 +263,11 @@ const subjectIdInstruction = document.getElementById("subject-id-instruction");
     function setTrialLabel(trialCount) {
       trialLabel.innerText = `Trial ${trialCount}`;
     }
+function getCurrentTimestamp() {
+  const date = new Date();
+  const timestamp = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+  return timestamp;
+}
 
     function handleBackspace(event) {
       if (event.keyCode === 8) { // Backspace key code
@@ -269,13 +276,14 @@ const subjectIdInstruction = document.getElementById("subject-id-instruction");
       }
     }
 
-    function handleEscape(event) {
-      if (event.keyCode === 27) { // Escape key code
-        const data = taskData.map((task, index) => `Task ${index + 1}: ${task}`).join("\n");
-        const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
-        saveAs(blob, "Schandry_Confidence.txt");
-      }
-    }
+  function handleEscape(event) {
+  if (event.keyCode === 27) { // Escape key code
+    // Modify data to include both the confidence level and the timestamp
+    const data = taskData.map((task, index) => `Task ${index + 1}: Confidence level - ${task.confidenceLevel}, Timestamp - ${task.timestamp}`).join("\n");
+    const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "Schandry_Confidence.txt");
+  }
+}
 
     function saveAs(blob, filename) {
   const subjectId = subjectIdInput.value.trim();
@@ -290,30 +298,33 @@ const subjectIdInstruction = document.getElementById("subject-id-instruction");
       recordResponseButton.disabled = false;
     });
 
-    recordResponseButton.addEventListener("click", () => {
-      const confidenceLevel = confidenceScale.value;
-      // Process the recorded response here or perform any desired action
-      console.log("Recorded Confidence Level:", confidenceLevel);
+   recordResponseButton.addEventListener("click", () => {
+  const confidenceLevel = confidenceScale.value;
+  const timestamp = getCurrentTimestamp();
 
-      // Hide the scale, button, slider text, anchor text, response label, and show the confirmation message and next trial button
-      confidenceScale.style.display = "none";
-      recordResponseButton.style.display = "none";
-      sliderText.style.display = "none";
-      anchorText.style.display = "none";
-      responseLabel.style.display = "none";
-      confirmationMessage.style.display = "block";
-      nextTrialButton.style.display = "block";
-      trialLabel.style.display = "none";
+  // Process the recorded response here or perform any desired action
+  console.log("Timestamp:", timestamp);
+  console.log("Recorded Confidence Level:", confidenceLevel);
 
-      taskData.push(confidenceLevel);
+  // Hide the scale, button, slider text, anchor text, response label, and show the confirmation message and next trial button
+  confidenceScale.style.display = "none";
+  recordResponseButton.style.display = "none";
+  sliderText.style.display = "none";
+  anchorText.style.display = "none";
+  responseLabel.style.display = "none";
+  confirmationMessage.style.display = "block";
+  nextTrialButton.style.display = "block";
+  trialLabel.style.display = "none";
 
-      trialCount++;
-      setTrialLabel(trialCount);
-    });
+  // Store both the confidence level and timestamp in the taskData array
+  taskData.push({ confidenceLevel, timestamp });
 
+  trialCount++;
+  setTrialLabel(trialCount);
+});
     nextTrialButton.addEventListener("click", () => {
       // Reset the slider to its initial value (0) and show the scale, button, slider text, anchor text, response label
-      confidenceScale.value = 0;
+      confidenceScale.value = 50;
       confidenceScale.style.display = "block";
       recordResponseButton.style.display = "inline-block";
       sliderText.style.display = "inline-block";
