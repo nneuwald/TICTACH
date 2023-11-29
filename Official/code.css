@@ -1,0 +1,336 @@
+
+body {
+  font-family: Arial, sans-serif;
+}
+    body {
+      margin-top: 4in;
+      font-size: 18px;
+    }
+
+    div {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 50px;
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      display: block;
+      width: 100%;
+      background-color: transparent;
+      -webkit-appearance: none;
+      height: 10px;
+      position: relative;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background-color: black;
+      cursor: pointer;
+      border-radius: 50%;
+      border: 1px solid black;
+      margin-top: -6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      border: none;
+      height: 1.5px;
+      background: black;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    input[type="range"]::before,
+    input[type="range"]::after {
+      content: "";
+      position: absolute;
+      height: 14px;
+      width: 2px;
+      background-color: black;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    input[type="range"]::before {
+      left: 0;
+    }
+
+    input[type="range"]::after {
+      right: 0;
+    }
+
+    #beat-rate {
+      width: 450px;
+      margin-left: 100px;
+      position: absolute;
+      top: 100px;
+      left: 40px;
+  display: none; /* Add this line to hide the slider initially */
+
+    }
+#slider-instructions.show-instructions {
+    font-family: Arial, sans-serif;
+
+  display: block;
+    margin-left: 20px; /* Adjust the margin-left value as desired */
+
+    margin-top: -320px; /* Adjust the margin-top value as desired */
+
+}
+#slider-instructions {
+  position: absolute;
+  top: 370px; /* Adjust the top position in pixels */
+  left: 340px; /* Adjust the left position as desired */
+  transform: translateX(-50%);
+  display: none;
+}
+#beat-rate.show-slider {
+  display: block; /* Add this class to show the slider */
+}
+    #beat-rate.hide-slider {
+      display: none;
+    }
+
+    button {
+      /* button styles here */
+    }
+
+    #recorded-value {
+      /* recorded value styles here */
+    }
+
+    #heart-div {
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      animation-name: beat;
+      animation-duration: 1s;
+      animation-iteration-count: infinite;
+  display: none; /* Add this line to hide the heart animation initially */
+
+  
+    }
+#heart-div.show-heart {
+  display: block; /* Add this class to show the heart animation */
+}
+
+    #heart-div.hide-heart {
+      display: none;
+    }
+
+    .paused {
+        animation-play-state: paused;
+      transform: scale(1) !important;
+
+    }
+
+    @keyframes beat {
+      0% {
+        transform: scale(1);
+      }
+      20% {
+        transform: scale(1.25);
+      }
+      80% {
+        transform: scale(1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    h1 {
+      font-size: 16px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 5px;
+      background-color: lightgray;
+      border-radius: 10px;
+      outline: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      background-color: black;
+      border-radius: 50%;
+      cursor: pointer;
+margin-top: -5.5px; /* Adjust the value as needed */
+    }
+
+    input[type=range]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background-color: black;
+      border-radius: 50%;
+      cursor: pointer;
+margin-top: -6px; /* Adjust the value as needed */
+    }
+
+   #finished-button {
+ font-size: 16px;
+  padding: 5px 16px;
+  margin-top: 60px;
+  position: absolute;
+  top: 100px;
+  left: 310px;
+  display: none; /* Add this line to hide the "Finished" button initially */
+}
+
+#cant-feel-button {
+  margin-top: 40px;
+  position: absolute;
+  top: 250px;
+  left: 410px;
+  display: none; /* Add this line to hide the "I cannot feel my heartbeat" button initially */
+}
+
+#finished-button.show-button,
+#cant-feel-button.show-button {
+  display: block; /* Add this class to show the buttons */
+}
+
+
+    #reset-button {
+      margin-top: 40px;
+      position: absolute;
+      top: 200px;
+      left: 200px;
+      display: none;
+    }
+
+    #beat-rate-text {
+      margin-top: 160px;
+      display: none;
+    }
+   
+    #confirmation-message {
+      display: none;
+      position: absolute;
+      top: 80px;
+      left: 300px;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-weight: bold;
+      font-size: 20px;
+      color: black;
+width: 565px; /* Adjust the width as desired */
+    }
+
+    #start-task-button, #end-task-button {
+      margin-top: 40px;
+      position: absolute;
+      top: 50px;
+      left: 200px;
+      background-color: green;
+      color: white;
+
+
+    }
+
+    #end-task-button {
+  visibility: hidden;
+    }
+
+    #task-label {
+  position: absolute;
+  top: 295px;
+  left: 10px;
+  font-size: 16px;
+  animation-duration: 0.2s;
+
+}
+.task-label.hide-label {
+  visibility: hidden;
+}
+.task-label.show-label {
+  visibility: visible;
+}
+
+    .task-label-animation {
+      animation-name: moveUp;
+    }
+
+    @keyframes moveUp {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-10px);
+      }
+    }
+#subject-id-container {
+      position: absolute;
+      top: 10px;
+      right: 150px;
+      display: flex;
+      align-items: center;
+    }
+
+   #subject-id-label {
+      margin-right: 5px;
+      margin-top: 10px; /* Adjust the value as desired */
+    }
+
+    #subject-id {
+      width: 50px;
+      font-size: 14px;
+    }
+  #start-task-button:hover {
+      background-color: lightgreen;
+    
+      font-size: 20px;
+      padding: 10px 20px;
+    }
+#confidence-scale-container {
+     visibility: hidden;
+    margin-top: -330px;
+    text-align: left;
+    width: 500px; /* Increase the width as desired */
+     margin-left: 50px;
+  margin-right: auto;
+  margin-bottom: 30px; /* Add margin-bottom to create space below the label */
+}
+#confidence-scale-container.show-container {
+  visibility: visible; /* Add this class to show the container */
+  }
+
+  #confidence-scale {
+    width: 100%; /* Adjust the width as desired */
+  margin-bottom: 40px; /* Add margin-bottom to create space below the slider */
+  }
+
+#record-response-button {
+  font-size: 16px;
+  padding: 5px 10px;
+  display: inline-block;
+  margin-top: 30px; /* Adjust the margin-top value to create space above the button */
+  margin-bottom: 20px; /* Add margin-bottom to create space below the button */
+}
+
+ 
