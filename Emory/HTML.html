@@ -1,0 +1,42 @@
+<div id="slider-instructions" style="display: none;">
+    <p>Move the slider to begin</p>
+  </div>
+<body>
+  <div id="subject-id-container">
+    <label for="subject-id" id="subject-id-label">Subject ID:</label>
+    <input type="text" id="subject-id" name="subject-id">
+  </div>
+
+  <div id="heart-div" class="paused" style="position: absolute; top: 50px; left: 10px;">
+    <div id="heart" style="position: relative; width: 100px; height: 90px; margin-top: 10px;">
+      <div id="heart-before" style="position: absolute; top: 0; width: 52px; height: 80px; border-radius: 50px 50px 0 0; background: #F44336; left: 50px; transform: rotate(-45deg); transform-origin: 0 100%;"></div>
+      <div id="heart-after" style="position: absolute; top: 0; width: 52px; height: 80px; border-radius: 50px 50px 0 0; background: #F44336; left: 0; transform: rotate(45deg); transform-origin: 100% 100%;"></div>
+    </div>
+  </div>
+
+  <input type="range" min="10" max="200" id="beat-rate">
+
+  <button id="finished-button">Finished</button>
+  <button id="cant-feel-button">I cannot feel my heartbeat</button>
+  <button id="start-task-button">Start Task</button>
+  <button id="end-task-button">End Task</button>
+
+  <div id="beat-rate-text"></div>
+<div id="confirmation-message" hidden></div>
+<div id="confidence-scale-container">
+  <label for="confidence-scale" style="text-align: center; display: block; font-size: 16px; font-weight: bold; font-family: Arial, sans-serif; margin-bottom: 20px;">
+    How confident are you that your previous response is accurate?
+  </label>
+  <div style="display: flex; justify-content: space-between;">
+    <span style="margin-right: -10px; margin-top: -10px; font-size: 14px; font-family: Arial, sans-serif;">Not at all confident</span>
+    <input type="range" id="confidence-scale" min="0" max="100" step="1">
+    <span style="margin-left: 10px; margin-top: -10px;font-size: 14px; font-family: Arial, sans-serif;">Extremely confident</span>
+  </div>
+  <button id="record-response-button" style="font-size: 12px; margin-top: -20px; margin-left: 185; margin-right: auto;">Record Response</button>
+</div>
+
+
+
+<div id="task-label" class="task-label hide-label">Seated 1</div>
+  <audio id="task-audio" src="https://assets.codepen.io/11796151/ding+%283%29.mp3"></audio>
+  <audio id="finish-audio" src="https://assets.codepen.io/11796151/beep-07a.mp3"></audio>
